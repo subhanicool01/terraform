@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  tasks: 
+  - name: installing Git
+    yum:
+    - name: install Git
+      state: present
+    when: ansible_os_family == "Redhat"
+  - name: installing apache2
+    apt:
+    - name: install apache2
+      state: present
+    when: ansible_os_family == "Dabian"

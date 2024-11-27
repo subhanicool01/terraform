@@ -1,0 +1,23 @@
+---
+- name: installing a web server
+  hosts: all
+  become: true
+  tasks:
+  - name: installing apache server
+  - yum:
+    - name: httpd
+      state: present
+  - name: service start
+    service: 
+    - name: service staring
+      state: started 
+      enabled: true
+  - name: add custom index
+    copy:
+    - name: index
+      src: source_path
+      dest: destinamtion_path
+
+
+
+  # In this playbook is having three modules 

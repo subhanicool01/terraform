@@ -1,0 +1,21 @@
+- name: restart-service
+  become: true
+  hosts: all
+  vars_filesusing the :
+  - varaible.yaml #this value will pickup from varaible.yaml file
+  tasks:
+  - name: installing apache2
+    yum:
+    - name: httpd
+      state: Present
+  - name: copy the index file
+    template: #dynamic data reflact
+    src: path
+    dest: path
+    notify:  # this is notify the which module we are choose
+      restaring the server
+    handlers:  # this is under the notify codition
+      service: 
+      - name: restaring the server 
+        enabled: true
+        state: restart

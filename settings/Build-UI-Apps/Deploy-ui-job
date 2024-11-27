@@ -1,0 +1,52 @@
+pipeline {
+    agent { label 'jenkins-worker-all' }
+    environment {
+        PT_BUILD_DIR_BASE = "/opt/procurant"
+        GCP_PROJECT_ID = "preprod-221918"
+        NFS_FRONTEND_REPO = "/opt/frontend-service-repo"
+        JENKINS_WORKSPACE = "/home/jenkins/agent/workspace"
+    }
+    stages {
+        stage("set job build name") {
+            steps {
+                script {
+                    currentBuild.displayName = "#${BUILD_NUMBER}:${PENV}:nginx"
+                }
+            }
+        }
+        stage('Cloning') {
+            steps {
+                git branch: '${HELM_BRANCH}',
+                    credentialsId: 'bitbucket',
+                    url: 'https://jenkins-procurant@bitbucket.org/procurant/procurant-helm-charts.git'
+            }
+        }
+        stage('deployment using helm chart') {
+            steps {
+                sh '''
+                    if [ ! ${CONTAINER_TAG} = "" ]; then
+                        UITAG=${CONTAINER_TAG}
+                    else
+                        UITAG=`cat ${NFS_FRONTEND_REPO}${PT_BUILD_DIR_BASE}/${BUILD_ENV}/UITAG`
+                    fi
+    				timestamp=$(date "+%Y%m%d_%H%M%S")
+    			    helm init --client-only --stable-repo-url https://charts.helm.sh/stable
+    			    cd ${JENKINS_WORKSPACE}/${JOB_BASE_NAME}/procurant-ui-service-chart/
+    			    cp ${JENKINS_WORKSPACE}/${JOB_BASE_NAME}/procurant-ui-service-chart/nginx-artifacts/${PENV}.procurant.io .
+    			    pwd
+    			    ls
+    			    echo "____ Helm chart content ____"
+    			    cat values_${PENV}.yaml
+    			    echo "____ Helm chart content ____"
+    			    
+    				helm_release="`helm ls --all --namespace ${PENV} | grep ${PENV}-nginx-release | awk '{print $1}'`"
+    				if [ -z "$helm_release" ]; then
+    				    helm install --namespace ${PENV} --values=values_${PENV}.yaml --name ${PENV}-nginx-release --set-string spec.template.annotations.timestamp=${timestamp} --set env.image.name=gcr.io/${GCP_PROJECT_ID}/nginx-1.17 --set env.image.tag=$UITAG .
+    				else
+    			        helm upgrade --namespace ${PENV} --install --values=values_${PENV}.yaml ${PENV}-nginx-release --set-string spec.template.annotations.timestamp=${timestamp} --set env.image.name=gcr.io/${GCP_PROJECT_ID}/nginx-1.17 --set env.image.tag=$UITAG .
+                    fi
+                '''
+            }
+        }
+    }
+}

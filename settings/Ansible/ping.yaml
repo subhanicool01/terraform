@@ -1,0 +1,21 @@
+- name: ping-module
+  hosts: all
+  become: true
+  tasks:
+  - name: ping-module
+    ping: # for ping module no need to add the value
+
+
+
+    # How to execute the playbook in ansible
+    # ansible-playbook -i inv <playbook-name> 
+
+
+    # to check syntax 
+
+    # ansible-palybook -i inv <palybook-name> --syntax-check
+
+    # Dry-run 
+    #this is show output only not execute
+
+    # ansible-playbook -i inv <palybook-name> --check

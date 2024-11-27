@@ -1,0 +1,18 @@
+# Ansible playbook structure
+# Every playbook is represented in the form of yaml files
+
+- name:  <name of the paly>
+
+---
+- name: syntax.yaml
+  hosts: all or group or single <which hosts this playbook will execute>
+  become: yes <this will execute with root privillages>
+  tasks:
+  - name: <name of the task>
+    <module name>: 
+      #parameters 
+        key: value
+    
+
+---        
+        

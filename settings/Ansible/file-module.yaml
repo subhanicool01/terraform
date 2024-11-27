@@ -1,0 +1,26 @@
+#using file module
+
+- name: file-module
+  hosts: all
+  become: true
+  tasks:
+  - name: file-module
+    file: 
+     owner: ansible
+     path: /tmp/module.txt
+     state: touch
+     mode: 0777
+
+
+ # How to execute the playbook in ansible
+    # ansible-playbook -i inv file-module.yaml 
+
+
+    # to check syntax 
+
+    # ansible-palybook -i inv <palybook-name> --syntax-check
+
+    # Dry-run 
+    #this is show output only not execute
+
+    # ansible-playbook -i inv <palybook-name> --check

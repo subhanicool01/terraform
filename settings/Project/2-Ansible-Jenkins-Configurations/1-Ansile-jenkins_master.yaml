@@ -1,0 +1,46 @@
+---
+ - hosts: jenkins-master
+   become: true
+   tasks:
+   - name: Add a jenkins-key
+     ansible.builtin.apt_key: #apt-key
+      url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      state: present
+   - name: Add a jenkins-Repo
+     ansible.builtin.apt_repository: 
+      repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+      state: present
+   - name: Update all packages to their latest version
+     ansible.builtin.apt:
+      name: "*"
+      state: latest
+   - name: Install Java
+     ansible.builtin.apt:
+      name: openjdk-17-jre
+      state: present
+   - name: install jenkins
+     ansible.builtin.apt:
+      name: jenkins
+      state: present
+   - name: Start the Jenkins service
+     ansible.builtin.service:
+      name: jenkins
+      state: started
+   - name: Enable the  service during boot time
+     ansible.builtin.service: 
+      name: jenkins
+      enabled: yes
+   - name: Cat the initialAdminPassword    # Cat the initialAdminPassword
+     ansible.builtin.shell: cat /var/lib/jenkins/secrets/initialAdminPassword # path
+     register: initial_admin_password # store the his own file name is dyanamical
+   - name: Display the initialAdminPassword
+     ansible.builtin.debug: 
+       var: initial_admin_password.stdout_lines  # using debud module under varaible to use show the password.  
+
+
+
+
+
+
+
+ 

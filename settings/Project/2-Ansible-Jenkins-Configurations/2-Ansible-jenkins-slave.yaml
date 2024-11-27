@@ -1,0 +1,56 @@
+---
+- hosts: jenkins-slave
+  become: true
+  tasks:
+  - name: Upadate the Ubuntu Repo
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  - name: Install the java as need for slave   # this java is used for slave
+    apt:
+      name: openjdk-11-jre  
+      state: present
+  - name: Download the mvn package
+    get_url: 
+      url: https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+      dest: /opt/
+  - name: Extracting the maven package
+    unarchive:
+     src: /opt/apache-maven-3.8.8-bin.tar.gz
+     dest: /opt/
+     remote_src: yes
+  - name: Install java 17   # this java is used for maven 
+    get_url:
+      url: https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
+      dest: /opt/
+  - name: Extrating Java
+    unarchive:
+      src: /opt/openjdk-17.0.2_linux-x64_bin.tar.gz
+      dest: /opt/
+      remote_src: yes
+  - name: Move to jdk 17
+    command: mv /opt/jdk-17.0.2/ /opt/jdk-17
+  - name: Creating a directry to work on slave
+    ansible.builtin.file:
+      path: /home/subhanicool01/jenkins
+      state: directory
+      mode: '0755'
+      owner: subhanicool01
+      group: subhanicool01
+  - name: Install docker
+    apt:
+      name: docker.io
+      state: present
+  - name: Add user into docker
+    ansible.builtin.user: 
+      name: subhanicool01
+      groups: docker
+      append: yes
+
+    
+
+
+
+# Now slave java is ready and maven java also ready
+# and also use the node, docker, k8s, soanr, helm............
+# after install the docker we need to fix one issue for permission denied.

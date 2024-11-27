@@ -1,0 +1,104 @@
+---
+- name: dynamic-value
+  hosts: all
+  become: true
+  vars:
+  - courceName: devops
+    batchNumber: 2
+
+  tasks:
+  - name: insyalling apache2
+    yum: 
+    - name: httpd
+      state: present
+  - name: start the service
+    service:
+    - name: service retstating
+      state: started
+      enabled: true
+  - name: add custom index
+    copy:
+    - name: adding custom name
+      src: index.html
+      dest: /var/html/index.html
+
+  
+  # in this index.html file in server having having data 
+     # vi index.html
+       # welcome to {{course_name}} program with {{batchNumber}}
+
+ #if we run the above playbook the output will beacome welcome to {{course_name}} program with {{batchNumber}}
+ # Because, copy module wont to update the varaibles, insted of copy use the "tempate module"
+
+- name: dynamic-value
+  hosts: all
+  become: true
+  vars:
+  - courceName: devops
+    batchNumber: 2
+
+  tasks:
+  - name: insyalling apache2
+    yum: 
+    - name: httpd
+      state: present
+  - name: start the service
+    service:
+    - name: service retstating
+      state: started
+      enabled: true
+  - name: add custom index
+    template:
+    - name: adding custom name
+      src: index.html
+      dest: /var/html/index.html
+
+      #the output is welcome to devops  program with 2
+
+      # Now if it is possible to pass the values in dynamically, other than vars.
+
+      # yes we can do that using arguments during the playbook execution.
+
+      # to passing --extra-vars = key=value
+      #             -e key=value
+
+
+
+
+# if we want to restart the service when anything changes on above scripts
+
+- name: restart-service
+  become: true
+  hosts: all
+  vars:
+   course_name: k8s
+   batchNumber: 2
+  tasks:
+  - name: installing apache2
+    yum:
+    - name: httpd
+      state: Present
+  - name: copy the index file
+    template: #dynamic data reflact
+    src: path
+    dest: path
+    notify:  # this is notify the which module we are choose
+      restaring the server
+    handlers:  # this is under the notify codition
+      service: 
+      - name: restaring the server 
+        enabled: true
+        state: restart
+
+# if we want to define a vars in other files/ or separate vars file and how to call
+
+# vi varaible.yaml
+
+ course_name: devops
+ batchNumber: 3
+
+
+# create a playbook
+# varaibles-play.yaml
+ 
+

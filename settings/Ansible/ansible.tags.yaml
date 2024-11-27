@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: Executing multiple tasks
+    yum:
+    - name: install Git
+      state: present
+    when: ansible_os_family == "Dabian"
+    copy:
+    - name: copy the index.html
+      src: /tmp/var/index.html
+      dest: /var/www/html/index.html
+    service:
+    - name: re-start the server
+      state: restarted
+      when: ansible_os_famil== "Redhat"  

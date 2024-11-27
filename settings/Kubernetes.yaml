@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: deployment
+metadata:
+- name: admin-service
+  namespace: dev1
+  labels:
+  - env: dev1
+  
+spec:
+- containers:
+  - image: image_id
+  - name: imgae_name

@@ -1,0 +1,62 @@
+#normally we wrote a plybooks 
+#without loops
+
+hosts: all
+become: true
+tasks:
+- name: installing Git
+  yum:
+  - name: Git
+    state: present
+- name: installing Http server
+  yum:
+  - name: HTTP
+    state: present
+- name: installing tree
+  yum: 
+  - name: tree
+    state: present
+- name: installing zip
+  yum:
+  - name: zip
+    state: present
+
+
+
+#with loops
+
+#In terraform we are using for_each for multiple packages/tools
+#for_each using "each"
+#Same as ansible for multiple packages to get using "with_items"
+# with_items are used "item"
+
+---
+hosts: all
+become: true
+tasks:
+- name: Installing multiple packages
+  yum:
+  - name: {{item}} 
+    state: present
+  with_items:
+  - Git
+  - httpd
+  - tree
+  - unzip
+
+
+
+# in this case all are installing/executing, but each item having is different value
+# how can we write with different values "key=value"
+
+---
+- hosts: all
+  become: true
+  tasks:
+  - name: creting the users
+    user:
+    - name: "{{item.name}}"
+      create_home: "{{item.crete_home}}"
+      with_items:
+      - {'name': 'siva',  'create_home': 'yes'}
+      - {'name': 'maha', 'crete_home': 'no'}
