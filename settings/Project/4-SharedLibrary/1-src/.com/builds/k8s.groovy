@@ -28,11 +28,17 @@ class k8s {
         ls -la eureka-repo(under the cicd files)
         """
     }
-    def k8sHelmChartsdeploy(app_name, env, helmchartpath) {
+    def k8sHelmChartsdeploy(app_name, env, helmchartpath, image_tag) {
         jenkins.sh """#!/bin/bash
         echo "Helm groovy method starts"
         echo "Installing helm charts"
-        helm install ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml ${helmchartpath}
+        if helm list | grep -q "${app_name}-${env}-chart": then
+          echo "Chart is Existing"
+          echo "Upgrade the helm"
+          helm upgrade ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=  ${helmchartpath}
+        else
+         echo "installing the chart"
+        helm install ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=  ${helmchartpath}
         # app_name-env-chart ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml ${helmchartpath}
         # helm intall chartname -f valuesfilepath chartpath
         # helm upgrade chartname -f valuesfilepath chartpath

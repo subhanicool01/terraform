@@ -46,6 +46,7 @@ def call(Map pipelineParams) {
         SONAR_TOKEN = credentials('sonar_creds')
         PUBLIC_IP = "34.41.246.17"
         HELM_PATH = "${WORKSPACE}/I27-CART/CHARTS"
+        Docker_image_tag = sh(script: 'git log -1 --pretty=%h', returnStdot:true).trim()
     }
     tools {
         maven 'Maven-3.8.8'
@@ -128,7 +129,7 @@ def call(Map pipelineParams) {
                 script {
                     imageValidation().call()
                     #Dockerdeploy('dev', '5761').call()
-                    k8s.k8sHelmChartsdeploy("${env.SERVICE_NAME}", "${env.ENV_NAME}", "${env.HELM_PATH}")
+                    k8s.k8sHelmChartsdeploy("${env.SERVICE_NAME}", "${env.ENV_NAME}", "${env.HELM_PATH}", "${env.Docker_image_tag}")
                 }
             }
         }
@@ -248,3 +249,4 @@ def Dockerdeploy(env_Name, host_Port) {
 
 
 //this helm pipeline
+// and also using commit based builds pls mention the --set command --set -f image to replace
