@@ -1,0 +1,7 @@
+apiVersion: v2
+name: eureka-server-chart
+version: 0.1.0
+appVersion: "1.1.0"
+type: application
+description: microservice for eureka-application
+
