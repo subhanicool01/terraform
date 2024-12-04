@@ -26,4 +26,5 @@ spec:
 
 ---
 
-              
+# in this process the values.yaml files are placed on Chart level or particular code level repository.
+# these values files are name with environment waises. ex values_dev.yaml, values_stage.yaml         
