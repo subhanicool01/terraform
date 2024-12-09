@@ -37,8 +37,9 @@ class k8s {
           echo "Upgrade the helm"
           helm upgrade ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=  ${helmchartpath}
         else
-         echo "installing the chart"
-        helm install ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=  ${helmchartpath}
+          echo "installing the chart"
+          helm install ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=  ${helmchartpath}
+        fi
         # app_name-env-chart ${app_name}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml ${helmchartpath}
         # helm intall chartname -f valuesfilepath chartpath
         # helm upgrade chartname -f valuesfilepath chartpath
